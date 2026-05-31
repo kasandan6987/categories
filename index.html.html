@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>انتخاب دسته‌بندی</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css">
+<style>
+  :root{
+    --bg-page:#f6f7fb;
+    --row-white:#ffffff;
+    --row-gray:#eef1f7;      /* ردیف دارای انتخاب */
+    --row-gray-hover:#e7ebf4;
+    --line:#e6e9f0;
+    --line-soft:#eef0f5;
+    --text:#1f2433;
+    --text-soft:#6b7280;
+    --accent:#2f6bed;
+    --accent-soft:#eaf0fe;
+    --accent-ring:#bcd0fb;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Vazirmatn","Tahoma",sans-serif;
+    background:var(--bg-page);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.7;
+  }
+
+  /* ——— حاشیه‌ها بیشتر، محتوا متمرکز ——— */
+  .page{
+    max-width:680px;
+    margin:0 auto;
+    padding:56px 24px 140px;
+  }
+
+  .head{margin-bottom:26px;}
+  .head h1{font-size:21px;font-weight:700;margin:0 0 6px;}
+  .head p{font-size:13.5px;color:var(--text-soft);margin:0;}
+
+  /* جستجو */
+  .search{position:relative;margin-bottom:22px;}
+  .search input{
+    width:100%;height:50px;border:1px solid var(--line);
+    border-radius:14px;background:#fff;padding:0 48px 0 16px;
+    font-family:inherit;font-size:14px;color:var(--text);outline:none;
+    transition:border-color .15s,box-shadow .15s;
+  }
+  .search input::placeholder{color:#9aa1ad;}
+  .search input:focus{border-color:var(--accent-ring);box-shadow:0 0 0 4px var(--accent-soft);}
+  .search svg{position:absolute;top:50%;right:16px;transform:translateY(-50%);color:#9aa1ad;}
+
+  /* کارت هر دسته‌بندی */
+  .cat{
+    background:#fff;border:1px solid var(--line);
+    border-radius:var(--radius);margin-bottom:14px;overflow:hidden;
+    transition:box-shadow .18s,border-color .18s;
+  }
+  .cat.has-selection{box-shadow:0 4px 18px -10px rgba(47,107,237,.25);}
+
+  /* ردیف عمومی */
+  .row{
+    display:flex;align-items:center;gap:13px;
+    padding:16px 18px;cursor:pointer;user-select:none;
+    background:var(--row-white);
+    transition:background .14s;
+  }
+  .row:hover{background:#fafbff;}
+  .row.selected{background:var(--row-gray);}
+  .row.selected:hover{background:var(--row-gray-hover);}
+
+  /* ردیف دسته‌بندی */
+  .cat-row .ico{
+    width:34px;height:34px;border-radius:10px;flex:none;
+    display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);
+  }
+  .cat-row .title{font-size:15px;font-weight:700;flex:1;}
+  .count{
+    font-size:12px;color:var(--accent);background:var(--accent-soft);
+    padding:3px 10px;border-radius:999px;font-weight:600;white-space:nowrap;
+  }
+  .chev{color:#9aa1ad;transition:transform .22s ease;flex:none;}
+  .cat.open .chev{transform:rotate(180deg);}
+
+  /* زیرمنوها */
+  .subs{
+    overflow:hidden;max-height:0;
+    transition:max-height .26s ease;
+    border-top:1px solid transparent;
+  }
+  .cat.open .subs{border-top-color:var(--line-soft);}
+  .sub-row{padding:13px 18px 13px 18px;}
+  .sub-row .title{font-size:14px;flex:1;color:#374151;}
+  .sub-row .title.on{color:var(--text);font-weight:600;}
+  .sub-row:not(:last-child){border-bottom:1px solid var(--line-soft);}
+
+  /* ——— چک‌باکس ——— */
+  .chk{
+    width:22px;height:22px;border-radius:7px;flex:none;
+    border:2px solid #c7ccd6;background:#fff;
+    display:grid;place-items:center;
+    transition:background .14s,border-color .14s;
+  }
+  .chk svg{opacity:0;transform:scale(.6);transition:opacity .14s,transform .14s;color:#fff;}
+  .chk.checked,.chk.indeterminate{background:var(--accent);border-color:var(--accent);}
+  .chk.checked .tick,.chk.indeterminate .dash{opacity:1;transform:scale(1);}
+
+  /* پاورقی ثابت */
+  .footer{
+    position:fixed;bottom:0;left:0;right:0;
+    background:rgba(246,247,251,.85);backdrop-filter:blur(8px);
+    border-top:1px solid var(--line);
+  }
+  .footer-inner{
+    max-width:680px;margin:0 auto;padding:16px 24px;
+    display:flex;gap:12px;
+  }
+  .btn{
+    height:50px;border-radius:13px;font-family:inherit;font-size:15px;
+    font-weight:700;cursor:pointer;border:1px solid transparent;
+    transition:transform .08s,filter .15s,background .15s;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{flex:1;background:var(--accent);color:#fff;}
+  .btn-primary:hover{filter:brightness(1.05);}
+  .btn-ghost{flex:none;padding:0 26px;background:#fff;color:var(--text);border-color:var(--line);}
+  .btn-ghost:hover{background:#f3f5fa;}
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="head">
+      <h1>انتخاب دسته‌بندی‌ها</h1>
+      <p>دسته‌بندی‌ها و زیرمجموعه‌های موردنظرت را انتخاب کن.</p>
+    </div>
+
+    <div class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="search" type="text" placeholder="جستجو دسته‌بندی‌ها">
+    </div>
+
+    <div id="list"></div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <button class="btn btn-primary">ادامه</button>
+      <button class="btn btn-ghost">مرحله قبل</button>
+    </div>
+  </div>
+
+<script>
+/* ——— داده‌ها ——— */
+const icons = {
+  shirt:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M16 3 12 5 8 3 3 6l2.5 4L8 9v11h8V9l2.5 1L21 6Z"/></svg>',
+  beauty:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6v4H9z"/><path d="M9 7h6l1 4v9H8v-9z"/></svg>',
+  phone:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>',
+  ring:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="15" r="6"/><path d="m9 9 1.5-4h3L15 9"/></svg>'
+};
+
+let data = [
+  { id:'fashion', name:'مد و پوشاک', icon:'shirt', open:true, subs:[
+    {id:'clothes', name:'پوشاک', sel:true},
+    {id:'shoes', name:'کفش', sel:false},
+    {id:'local', name:'پوشاک بومی و محلی', sel:false},
+  ]},
+  { id:'beauty', name:'زیبایی و سلامت', icon:'beauty', open:true, subs:[
+    {id:'skin', name:'مراقبت از پوست', sel:true},
+    {id:'health', name:'ابزار سلامت', sel:true},
+    {id:'pbeauty', name:'لوازم شخصی زیبایی', sel:true},
+    {id:'makeup', name:'لوازم آرایشی', sel:true},
+    {id:'hair', name:'مراقبت از مو', sel:true},
+    {id:'perfume', name:'عطر و ادکلن', sel:true},
+    {id:'hygiene', name:'لوازم بهداشتی', sel:true},
+  ]},
+  { id:'digital', name:'کالای دیجیتال', icon:'phone', open:false, subs:[
+    {id:'mobile', name:'موبایل', sel:false},
+    {id:'laptop', name:'لپ‌تاپ و کامپیوتر', sel:false},
+    {id:'audio', name:'صوتی و تصویری', sel:false},
+    {id:'gadget', name:'گجت و لوازم جانبی', sel:false},
+  ]},
+  { id:'gold', name:'طلا و اکسسوری', icon:'ring', open:false, subs:[
+    {id:'gold-item', name:'طلا', sel:true},
+    {id:'silver', name:'نقره', sel:true},
+    {id:'watch', name:'ساعت', sel:true},
+    {id:'acc', name:'اکسسوری', sel:false},
+  ]},
+];
+
+/* ——— ابزار ——— */
+const toFa = n => n.toLocaleString('fa-IR');
+const tick = '<svg class="tick" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L19 7"/></svg>';
+const dash = '<svg class="dash" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><path d="M6 12h12"/></svg>';
+
+/* وضعیت چک‌باکس دسته: 0 خالی / 1 خط‌دار / 2 پر */
+function catState(cat){
+  const n = cat.subs.filter(s=>s.sel).length;
+  if(n===0) return 0;
+  if(n===cat.subs.length) return 2;
+  return 1;
+}
+
+/* ——— رندر ——— */
+const list = document.getElementById('list');
+
+function render(){
+  const q = (document.getElementById('search').value||'').trim();
+  list.innerHTML = '';
+
+  data.forEach(cat=>{
+    // فیلتر جستجو
+    const matchCat = cat.name.includes(q);
+    const matchSubs = cat.subs.filter(s=>s.name.includes(q));
+    if(q && !matchCat && matchSubs.length===0) return;
+    const visibleSubs = (q && !matchCat) ? matchSubs : cat.subs;
+
+    const st = catState(cat);
+    const selCount = cat.subs.filter(s=>s.sel).length;
+    const hasSel = selCount>0;
+
+    const card = document.createElement('div');
+    card.className = 'cat' + (cat.open?' open':'') + (hasSel?' has-selection':'');
+
+    /* ردیف دسته‌بندی */
+    const row = document.createElement('div');
+    row.className = 'row cat-row' + (hasSel?' selected':'');
+    row.innerHTML = `
+      <div class="chk ${st===2?'checked':st===1?'indeterminate':''}" data-chk="${cat.id}">
+        ${st===2?tick:st===1?dash:''}
+      </div>
+      <div class="ico">${icons[cat.icon]}</div>
+      <div class="title">${cat.name}</div>
+      ${hasSel?`<span class="count">${toFa(selCount)} انتخاب‌شده</span>`:''}
+      <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    `;
+    // کلیک روی چک‌باکس → انتخاب/لغو همه
+    row.querySelector('[data-chk]').addEventListener('click', e=>{
+      e.stopPropagation();
+      const all = catState(cat)===2;
+      cat.subs.forEach(s=>s.sel = !all);
+      render();
+    });
+    // کلیک روی بقیهٔ ردیف → باز/بسته
+    row.addEventListener('click', ()=>{ cat.open = !cat.open; render(); });
+    card.appendChild(row);
+
+    /* زیرمنوها */
+    const subs = document.createElement('div');
+    subs.className = 'subs';
+    visibleSubs.forEach(sub=>{
+      const sr = document.createElement('div');
+      sr.className = 'row sub-row' + (sub.sel?' selected':'');
+      sr.innerHTML = `
+        <div class="chk ${sub.sel?'checked':''}">${sub.sel?tick:''}</div>
+        <div class="title ${sub.sel?'on':''}">${sub.name}</div>
+      `;
+      sr.addEventListener('click', ()=>{ sub.sel = !sub.sel; render(); });
+      subs.appendChild(sr);
+    });
+    card.appendChild(subs);
+    list.appendChild(card);
+
+    // ارتفاع آکاردئون
+    if(cat.open) subs.style.maxHeight = subs.scrollHeight + 'px';
+  });
+
+  if(!list.children.length){
+    list.innerHTML = '<p style="text-align:center;color:#9aa1ad;padding:40px 0;">موردی یافت نشد.</p>';
+  }
+}
+
+document.getElementById('search').addEventListener('input', render);
+render();
+</script>
+</body>
+</html>
